@@ -525,7 +525,7 @@ class Trainer:
             return data_list
 
     def create_dataloader(self):
-        if os.path.exists("/root") and os.path.exists("processed_data_list.pkl"):
+        if os.path.exists("/root") and os.path.exists("processed_data_list.pkl") and self.debug_mode is False:
             with open("processed_data_list.pkl", "rb") as f:
                 data_list = pickle.load(f)
         else:
