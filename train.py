@@ -691,7 +691,7 @@ if __name__ == "__main__":
         data_dir = "/Volumes/移动硬盘/数据/会员商品/"
     else:
         data_dir = "/root/ctr/"
-    trainer = Trainer(epochs=10, batch_size=4, seed=1, use_ratio=0.01, split_ratio=0.2, lr=3e-4, weight_decay=0.0001,
+    trainer = Trainer(epochs=10, batch_size=4, seed=1, use_ratio=0.1, split_ratio=0.2, lr=3e-4, weight_decay=0.0001,
                       optimizer="adam", lr_schedule="", warmup_steps=2000, use_grad_clip=False, max_grad=1.0,
                       use_apex=True, output_model=False, emb_dir="emb/", data_dir=data_dir,
                       model_save_dir="model/", debug_mode=False, use_seq_emb=True, use_seq_cnt=False, embedding_size=10,
