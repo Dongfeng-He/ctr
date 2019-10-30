@@ -554,6 +554,7 @@ class Trainer:
         # 粗粒度的 auc
         total_probs = list(chain(*prob_list))
         total_lables = list(chain(*label_list))
+        print(total_lables)
         macro_auc_score = roc_auc_score(total_lables, total_probs)
         # 细粒度的 auc
         micro_auc_score = 0
