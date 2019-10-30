@@ -700,7 +700,7 @@ if __name__ == "__main__":
     else:
         data_dir = "/root/ctr/"
     trainer = Trainer(epochs=10, batch_size=4, seed=1, use_ratio=0.01, split_ratio=0.8, lr=3e-4, weight_decay=0.0001,
-                      optimizer="adam", lr_schedule="", warmup_steps=2000, use_grad_clip=False, max_grad=1.0,
+                      optimizer="adam", lr_schedule="", warmup_steps=2000, use_grad_clip=True, max_grad=1.0,
                       use_apex=False, output_model=False, emb_dir="emb/", data_dir=data_dir,
                       model_save_dir="model/", debug_mode=False, use_seq_emb=True, use_seq_cnt=False, embedding_size=10,
                       is_shallow_dropout=True, dropout_shallow=(0.5, 0.5), deep_layers=(32, 32), is_deep_dropout=True,
