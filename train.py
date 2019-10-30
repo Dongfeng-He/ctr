@@ -1,21 +1,22 @@
 # -*- coding:utf-8 -*-
+import datetime
+import json
 import math
 import os
+import pickle
 import random
 from itertools import chain
 from time import time
-import pickle
+
 import numpy as np
-import json
 import torch
 import torch.backends.cudnn
 import torch.nn as nn
 import torch.nn.functional as F
 from sklearn.metrics import roc_auc_score, accuracy_score
 from torch.utils import data
-import datetime
+
 from seq.seq import TCNModel, LSTMModel, AVGModel, AttentionModel
-from utils import data_preprocess
 
 
 class MyDataset(data.Dataset):

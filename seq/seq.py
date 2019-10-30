@@ -1,7 +1,8 @@
+import math
+
 import torch
 import torch.nn as nn
 from torch.nn.utils import weight_norm
-import math
 
 
 def gelu(x):
