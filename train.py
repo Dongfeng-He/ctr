@@ -451,7 +451,7 @@ class Trainer:
                     continue
                 device_id, gender, age, device_os, brand, model, isp, country, province, city, play_list, trade_date, trade_fee, continuous_flag, first_buy, sum_fee, first_date, zhibo_flag, trade_original_fee, trade_duration, trade_type = field_list
                 if trade_duration not in self.trade_duration_dict or trade_type == "联合会员": continue
-                if self.is_float(trade_fee):
+                if self.is_float(trade_fee) and trade_fee != "0.0":
                     trade_fee = float(trade_fee)
                 else:
                     continue
@@ -466,14 +466,12 @@ class Trainer:
                 products_list = []
                 label_list = []
                 # 类别数据 emb_size 是 dict_len + 1
-                for duration in [0, 1, 2, 3, 4]:
-                    for con in [0, 1]:
-                        if duration == 3 and con == 1: continue # 半年没有连续
-                        products_list.append([duration, con])
-                        if duration == self.trade_duration_dict[trade_duration] and con == continuous_flag:
-                            label_list.append(1)
-                        else:
-                            label_list.append(0)
+                for duration, con in [[0, 0], [1, 0], [1, 1], [2, 0], [2, 1], [3, 0], [4, 0], [4, 1]]:
+                    products_list.append([duration, con])
+                    if duration == self.trade_duration_dict[trade_duration] and con == continuous_flag:
+                        label_list.append(1)
+                    else:
+                        label_list.append(0)
                 if sum(label_list) != 1: continue
                 feature_list = [self.feature_indexing(gender, self.emb_index_dict["gender"]),
                                 self.feature_indexing(age, self.emb_index_dict["age"]),
