@@ -15,6 +15,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from sklearn.metrics import roc_auc_score, accuracy_score
 from torch.utils import data
+from tqdm import tqdm
 
 from seq.seq import TCNModel, LSTMModel, AVGModel, AttentionModel
 
@@ -438,7 +439,7 @@ class Trainer:
         with open(os.path.join(self.data_dir, "vip_feature1.tsv"), "r") as f:
             data_list = []
             for i, line in enumerate(f):
-                if self.debug_mode and i == 1000:
+                if self.debug_mode and i == 100:
                     break
                 if (i + 1) % 10000 == 0:
                     print("已处理 %d" % (i + 1))
@@ -470,6 +471,7 @@ class Trainer:
                             label_list.append(1)
                         else:
                             label_list.append(0)
+                if sum(label_list) != 1: continue
                 feature_list = [self.feature_indexing(gender, self.emb_index_dict["gender"]),
                                 self.feature_indexing(age, self.emb_index_dict["age"]),
                                 self.feature_indexing(device_os, self.emb_index_dict["os"]),    # key 不是 device_os
@@ -603,7 +605,7 @@ class Trainer:
             train_start_time = time()
             optimizer.zero_grad()
             # 加载每个 batch 并训练
-            for i, large_batch_data in enumerate(train_dataset):
+            for i, large_batch_data in enumerate(tqdm(train_dataset)):
                 batch_loss = 0
                 for batch_data in large_batch_data:
                     if torch.cuda.is_available():
@@ -645,7 +647,7 @@ class Trainer:
             total_label_list = []
             prob_list = []
             model.eval()
-            for j, large_batch_data in enumerate(valid_dataset):
+            for j, large_batch_data in enumerate(tqdm(valid_dataset)):
                 for valid_batch_data in large_batch_data:
                     if torch.cuda.is_available():
                         feature_list = valid_batch_data[0].to(self.device)
@@ -687,11 +689,11 @@ class Trainer:
 
 
 if __name__ == "__main__":
-    if os.path.exists("/Volumes/移动硬盘/数据/会员商品/"):
-        data_dir = "/Volumes/移动硬盘/数据/会员商品/"
+    if os.path.exists("/Volumes/hedongfeng/data/vip/"):
+        data_dir = "/Volumes/hedongfeng/data/vip/"
     else:
         data_dir = "/root/ctr/"
-    trainer = Trainer(epochs=10, batch_size=4, seed=1, use_ratio=0.1, split_ratio=0.2, lr=3e-4, weight_decay=0.0001,
+    trainer = Trainer(epochs=10, batch_size=4, seed=1, use_ratio=0.0001, split_ratio=0.2, lr=3e-4, weight_decay=0.0001,
                       optimizer="adam", lr_schedule="", warmup_steps=2000, use_grad_clip=False, max_grad=1.0,
                       use_apex=True, output_model=False, emb_dir="emb/", data_dir=data_dir,
                       model_save_dir="model/", debug_mode=False, use_seq_emb=True, use_seq_cnt=False, embedding_size=10,
