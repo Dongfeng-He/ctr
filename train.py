@@ -701,7 +701,7 @@ if __name__ == "__main__":
     trainer = Trainer(epochs=10, batch_size=4, seed=1, use_ratio=0.1, split_ratio=0.2, lr=3e-4, weight_decay=0.0001,
                       optimizer="adam", lr_schedule="", warmup_steps=2000, use_grad_clip=False, max_grad=1.0,
                       use_apex=True, output_model=False, emb_dir="emb/", data_dir=data_dir,
-                      model_save_dir="model/", debug_mode=True, use_seq_emb=True, use_seq_cnt=False, embedding_size=10,
+                      model_save_dir="model/", debug_mode=False, use_seq_emb=True, use_seq_cnt=False, embedding_size=10,
                       is_shallow_dropout=True, dropout_shallow=(0.5, 0.5), deep_layers=(32, 32), is_deep_dropout=True,
                       dropout_deep=(0.5, 0.5, 0.5), deep_layers_activation='relu', is_batch_norm=False, use_plain_emb=True,
                       use_lstm=False, use_tcn=True, use_avg=False, use_att=True, seq_emb_size=64, seq_hidden_size=32,
