@@ -450,10 +450,9 @@ class Trainer:
                 if len(field_list) != 21:
                     continue
                 device_id, gender, age, device_os, brand, model, isp, country, province, city, play_list, trade_date, trade_fee, continuous_flag, first_buy, sum_fee, first_date, zhibo_flag, trade_original_fee, trade_duration, trade_type = field_list
-                if trade_duration not in self.trade_duration_dict or trade_type == "联合会员": continue
-                if self.is_float(trade_fee) and trade_fee != "0.0":
-                    trade_fee = float(trade_fee)
-                else:
+                if trade_duration not in self.trade_duration_dict or trade_type == "联合会员":
+                    continue
+                if trade_fee == "0.0":
                     continue
                 if self.is_float(continuous_flag):
                     continuous_flag = int(continuous_flag)
@@ -461,8 +460,6 @@ class Trainer:
                     continue
                 brand = brand.lower()
                 model = model.lower()
-                if trade_fee not in self.emb_index_dict["trade_fee"]:
-                    continue
                 products_list = []
                 label_list = []
                 # 类别数据 emb_size 是 dict_len + 1
