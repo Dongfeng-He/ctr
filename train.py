@@ -520,13 +520,18 @@ class Trainer:
                     feature_list.extend([0, 0, 0])
                 value_list = [1] * (len(feature_list) + len(products_list[0]))
                 data_list.append([feature_list, value_list, channel_list, cate_list, products_list, label_list])
-            use_sample_num = int(len(data_list) * self.use_ratio)
-            print("总样本: %d, 有效样本: %d, 使用样本: %d" % (i + 1, len(data_list), use_sample_num))
-            self.seed_everything()
-            return random.sample(data_list, use_sample_num)
+            with open("processed_data_list.pkl", "wb") as f:
+                pickle.dump(data_list, f)
+            return data_list
 
     def create_dataloader(self):
-        data_list = self.load_data()
+        if os.path.exists("/root") and os.path.exists("processed_data_list.pkl"):
+            with open("processed_data_list.pkl", "rb") as f:
+                data_list = pickle.load(f)
+        else:
+            data_list = self.load_data()
+        self.seed_everything()
+        data_list = random.sample(data_list, int(len(data_list) * self.use_ratio))
         self.seed_everything()
         random.shuffle(data_list)
         train_num = int(len(data_list) * self.split_ratio)
