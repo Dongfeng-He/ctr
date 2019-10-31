@@ -722,8 +722,8 @@ if __name__ == "__main__":
                       model_save_dir="model/", debug_mode=False, use_seq_emb=True, use_seq_cnt=True, embedding_size=10,
                       is_shallow_dropout=True, dropout_shallow=(0.5, 0.5), deep_layers=(32, 32), is_deep_dropout=True,
                       dropout_deep=(0.5, 0.5, 0.5), deep_layers_activation='relu', is_batch_norm=False, use_plain_emb=True,
-                      use_lstm=False, use_tcn=True, use_avg=False, use_att=False, seq_emb_size=64, seq_hidden_size=32,
-                      seq_pool="both", dense_product_feature=False, loss_func="bce", log_name="tcn_modified")
+                      use_lstm=False, use_tcn=False, use_avg=True, use_att=False, seq_emb_size=64, seq_hidden_size=32,
+                      seq_pool="both", dense_product_feature=False, loss_func="bce", log_name="avg_modified")
     trainer.train()
 
 
