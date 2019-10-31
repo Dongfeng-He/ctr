@@ -339,7 +339,7 @@ class Trainer:
                  is_shallow_dropout=True, dropout_shallow=(0.5, 0.5), deep_layers=(32, 32), is_deep_dropout=True,
                  dropout_deep=(0.5, 0.5, 0.5), deep_layers_activation='relu', is_batch_norm=False, use_plain_emb=True,
                  use_lstm=False, use_tcn=False, use_avg=False, use_att=True, seq_emb_size=64, seq_hidden_size=32,
-                 seq_pool="max", dense_product_feature=False, loss_func="rank",
+                 seq_pool="max", dense_product_feature=False, loss_func="rank", log_name="train_log",
                  ):
         self.device = torch.device('cuda')
         self.output_model = output_model
@@ -382,6 +382,7 @@ class Trainer:
         self.seq_pool = seq_pool
         self.dense_product_feature = dense_product_feature
         self.loss_func = loss_func
+        self.log_name = log_name
         self.trade_duration_dict = {"7d": 0, "31d": 1, "93d": 2, "186d": 3, "365d": 4, "372d": 4}
         with open(os.path.join(self.emb_dir, "emb_index_dict.pkl"), "rb") as f:
             self.emb_index_dict = pickle.load(f)
@@ -617,7 +618,7 @@ class Trainer:
         if torch.cuda.is_available() and self.use_apex:
             model, optimizer = amp.initialize(model, optimizer, opt_level="O1", verbosity=0)
         # 开始训练
-        f_log = open("train_log.txt", "w", encoding="utf-8")
+        f_log = open("%s.txt" % self.log_name, "w", encoding="utf-8")
         best_score = -1
         model.train()
         # TODO: LR schedule
@@ -720,8 +721,8 @@ if __name__ == "__main__":
                       model_save_dir="model/", debug_mode=False, use_seq_emb=True, use_seq_cnt=False, embedding_size=10,
                       is_shallow_dropout=True, dropout_shallow=(0.5, 0.5), deep_layers=(32, 32), is_deep_dropout=True,
                       dropout_deep=(0.5, 0.5, 0.5), deep_layers_activation='relu', is_batch_norm=False, use_plain_emb=True,
-                      use_lstm=False, use_tcn=False, use_avg=False, use_att=True, seq_emb_size=64, seq_hidden_size=32,
-                      seq_pool="both", dense_product_feature=False, loss_func="bce")
+                      use_lstm=True, use_tcn=False, use_avg=False, use_att=False, seq_emb_size=64, seq_hidden_size=32,
+                      seq_pool="both", dense_product_feature=False, loss_func="bce", log_name="lstm")
     trainer.train()
 
 
