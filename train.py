@@ -720,12 +720,12 @@ if __name__ == "__main__":
     # 每次改变了 load_data (比如 use_seq_cnt=True)，都要重新删掉 pkl 文件，重新加载
     trainer = Trainer(epochs=20, batch_size=16, seed=1, use_ratio=0.1, split_ratio=0.8, lr=3e-4, weight_decay=0.000,
                       optimizer="adam", lr_schedule="", warmup_steps=2000, use_grad_clip=True, max_grad=1.0,
-                      use_apex=False, output_model=True, emb_dir="emb/", data_dir=data_dir,
+                      use_apex=False, output_model=False, emb_dir="emb/", data_dir=data_dir,
                       model_save_dir="model/", debug_mode=False, use_seq_emb=True, use_seq_cnt=True, embedding_size=10,
                       is_shallow_dropout=True, dropout_shallow=(0.5, 0.5), deep_layers=(32, 32), is_deep_dropout=True,
                       dropout_deep=(0.5, 0.5, 0.5), deep_layers_activation='relu', is_batch_norm=False, use_plain_emb=True,
-                      use_lstm=False, use_tcn=True, use_avg=False, use_att=False, seq_emb_size=64, seq_hidden_size=32,
-                      seq_pool="both", dense_product_feature=False, loss_func="bce", log_name="tcn")
+                      use_lstm=False, use_tcn=False, use_avg=True, use_att=False, seq_emb_size=64, seq_hidden_size=32,
+                      seq_pool="both", dense_product_feature=False, loss_func="bce", log_name="avg")
     trainer.train()
 
 
