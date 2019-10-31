@@ -206,6 +206,7 @@ class DeepFM(torch.nn.Module):
         :param X_seq: seq input tensor, batch_size * seq_len * 1
         :return: the last output
         """
+        print(Xi)
         # X_seq 做完变换再扩充
         product_num, _ = Xp.shape
         Xi = Xi.unsqueeze(0).unsqueeze(2).repeat(product_num, 1, 1)
