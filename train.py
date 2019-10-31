@@ -311,16 +311,14 @@ class DeepFM(torch.nn.Module):
             total_sum = torch.sum(x_deep, 1)
         total_sum_previous = total_sum
         total_sum = self.sigmoid(total_sum)
+        print(total_sum_previous)
+        print(total_sum)
+        print(label)
         if label is not None:
             label = label.float()
             if self.loss_func == "rank":
                 label *= 10
-            try:
-                loss = self.criterion(total_sum, label)
-            except:
-                print(total_sum_previous)
-                print(total_sum)
-                print(label)
+            loss = self.criterion(total_sum, label)
             return loss
         else:
             return total_sum
