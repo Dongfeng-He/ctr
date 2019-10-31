@@ -312,10 +312,10 @@ class DeepFM(torch.nn.Module):
         total_sum_previous = total_sum
         total_sum = self.sigmoid(total_sum)
 
-        print(Xi)
-        print(Xp)
-        print(Xv)
-        print(X_seq)
+        # print(Xi)
+        # print(Xp)
+        # print(Xv)
+        # print(X_seq)
 
         print(total_sum_previous)
         print(total_sum)
@@ -713,7 +713,7 @@ if __name__ == "__main__":
         data_dir = "/Volumes/hedongfeng/data/vip/"
     else:
         data_dir = "/root/ctr/"
-    trainer = Trainer(epochs=10, batch_size=16, seed=1, use_ratio=0.01, split_ratio=0.8, lr=3e-3, weight_decay=0.0001,
+    trainer = Trainer(epochs=10, batch_size=16, seed=1, use_ratio=0.01, split_ratio=0.8, lr=3e-3, weight_decay=0.000,
                       optimizer="adam", lr_schedule="", warmup_steps=2000, use_grad_clip=True, max_grad=1.0,
                       use_apex=False, output_model=False, emb_dir="emb/", data_dir=data_dir,
                       model_save_dir="model/", debug_mode=False, use_seq_emb=True, use_seq_cnt=False, embedding_size=10,
