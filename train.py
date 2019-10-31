@@ -206,7 +206,6 @@ class DeepFM(torch.nn.Module):
         :param X_seq: seq input tensor, batch_size * seq_len * 1
         :return: the last output
         """
-        print(Xi)
         # X_seq 做完变换再扩充
         product_num, _ = Xp.shape
         Xi = Xi.unsqueeze(0).unsqueeze(2).repeat(product_num, 1, 1)
@@ -529,7 +528,8 @@ class Trainer:
                     # 专辑和分类 emb_size 是 dict_len + 2 (0: 未知，len + 1: 白板填充)
                     channel_list = [len(self.emb_index_dict["channel"]) + 1] * 1
                     cate_list = [len(self.emb_index_dict["cate"]) + 1] * 1
-                    feature_list.extend([0, 0, 0])
+                    if self.use_seq_cnt:
+                        feature_list.extend([0, 0, 0])
                 value_list = [1] * (len(feature_list) + len(products_list[0]))
                 data_list.append([feature_list, value_list, channel_list, cate_list, products_list, label_list])
             if self.debug_mode is False:
