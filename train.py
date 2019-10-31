@@ -718,7 +718,7 @@ if __name__ == "__main__":
         data_dir = "/root/ctr/"
     # weight_decay 可能会造成权重过小 nan
     # 每次改变了 load_data (比如 use_seq_cnt=True)，都要重新删掉 pkl 文件，重新加载
-    trainer = Trainer(epochs=10, batch_size=16, seed=1, use_ratio=0.01, split_ratio=0.8, lr=3e-4, weight_decay=0.000,
+    trainer = Trainer(epochs=10, batch_size=16, seed=1, use_ratio=0.02, split_ratio=0.8, lr=3e-4, weight_decay=0.000,
                       optimizer="adam", lr_schedule="", warmup_steps=2000, use_grad_clip=True, max_grad=1.0,
                       use_apex=False, output_model=True, emb_dir="emb/", data_dir=data_dir,
                       model_save_dir="model/", debug_mode=False, use_seq_emb=True, use_seq_cnt=False, embedding_size=10,
