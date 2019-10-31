@@ -316,10 +316,10 @@ class DeepFM(torch.nn.Module):
         # print(Xp)
         # print(Xv)
         # print(X_seq)
-
-        print(total_sum_previous)
-        print(total_sum)
-        print(label)
+        #
+        # print(total_sum_previous)
+        # print(total_sum)
+        # print(label)
 
         if label is not None:
             label = label.float()
