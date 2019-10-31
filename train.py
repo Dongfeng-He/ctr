@@ -318,9 +318,9 @@ class DeepFM(torch.nn.Module):
             try:
                 loss = self.criterion(total_sum, label)
             except:
-                print("total_sum_previous", total_sum_previous)
-                print("total_sum", total_sum)
-                print("label", label)
+                print(total_sum_previous)
+                print(total_sum)
+                print(label)
             return loss
         else:
             return total_sum
