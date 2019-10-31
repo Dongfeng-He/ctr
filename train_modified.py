@@ -189,6 +189,16 @@ class DeepFM(torch.nn.Module):
                     setattr(self, 'linear_'+str(i+1)+'_dropout', nn.Dropout(self.dropout_deep[i+1]))
             print("Init deep part succeed")
 
+        """
+        projection part
+        """
+        if self.use_fm and self.use_deep:
+            concat_size = len(self.feature_sizes) + self.embedding_size + self.deep_layers[-1]
+        elif self.use_fm:
+            concat_size = len(self.feature_sizes) + self.embedding_size
+        else:
+            concat_size = self.deep_layers[-1]
+        self.concat_projection = nn.Linear(concat_size, 1)
         print("Init succeed")
 
     def rank_loss(self, batch_preds, batch_stds):
@@ -297,38 +307,26 @@ class DeepFM(torch.nn.Module):
                 if self.is_deep_dropout:
                     x_deep = getattr(self, 'linear_' + str(i + 1) + '_dropout')(x_deep)
         """
-        sum
+        projection
         """
         if self.use_fm and self.use_deep:
-            total_sum = torch.sum(fm_first_order, 1) + torch.sum(fm_second_order, 1) + torch.sum(x_deep, 1) + self.bias
-        elif self.use_ffm and self.use_deep:
-            total_sum = torch.sum(ffm_first_order, 1) + torch.sum(ffm_second_order, 1) + torch.sum(x_deep, 1) + self.bias
+            concat_input = torch.cat([fm_first_order, fm_second_order, x_deep], 1)
         elif self.use_fm:
-            total_sum = torch.sum(fm_first_order, 1) + torch.sum(fm_second_order, 1) + self.bias
-        elif self.use_ffm:
-            total_sum = torch.sum(ffm_first_order, 1) + torch.sum(ffm_second_order, 1) + self.bias
+            concat_input = torch.cat([fm_first_order, fm_second_order], 1)
         else:
-            total_sum = torch.sum(x_deep, 1)
-        total_sum_previous = total_sum
-        total_sum = self.sigmoid(total_sum)
+            concat_input = torch.cat([x_deep], 1)
 
-        # print(Xi)
-        # print(Xp)
-        # print(Xv)
-        # print(X_seq)
-        #
-        # print(total_sum_previous)
-        # print(total_sum)
-        # print(label)
+        output = self.concat_projection(concat_input)
+        output = self.sigmoid(output)
 
         if label is not None:
             label = label.float()
             if self.loss_func == "rank":
                 label *= 10
-            loss = self.criterion(total_sum, label)
+            loss = self.criterion(output, label)
             return loss
         else:
-            return total_sum
+            return output
 
 
 class Trainer:
@@ -721,11 +719,11 @@ if __name__ == "__main__":
     trainer = Trainer(epochs=20, batch_size=16, seed=1, use_ratio=0.1, split_ratio=0.8, lr=3e-4, weight_decay=0.000,
                       optimizer="adam", lr_schedule="", warmup_steps=2000, use_grad_clip=True, max_grad=1.0,
                       use_apex=False, output_model=False, emb_dir="emb/", data_dir=data_dir,
-                      model_save_dir="model/", debug_mode=False, use_seq_emb=True, use_seq_cnt=True, embedding_size=10,
+                      model_save_dir="model/", debug_mode=True, use_seq_emb=True, use_seq_cnt=True, embedding_size=10,
                       is_shallow_dropout=True, dropout_shallow=(0.5, 0.5), deep_layers=(32, 32), is_deep_dropout=True,
                       dropout_deep=(0.5, 0.5, 0.5), deep_layers_activation='relu', is_batch_norm=False, use_plain_emb=True,
-                      use_lstm=False, use_tcn=False, use_avg=True, use_att=False, seq_emb_size=64, seq_hidden_size=32,
-                      seq_pool="both", dense_product_feature=False, loss_func="bce", log_name="train_log")
+                      use_lstm=False, use_tcn=True, use_avg=False, use_att=False, seq_emb_size=64, seq_hidden_size=32,
+                      seq_pool="both", dense_product_feature=False, loss_func="bce", log_name="tcn_modified")
     trainer.train()
 
 
