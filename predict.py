@@ -578,6 +578,7 @@ class Trainer:
             model.load_state_dict(torch.load("/Volumes/hedongfeng/model/vip/model_92_89_72.bin", map_location="cpu"))
         else:
             model.load_state_dict(torch.load("/root/ctr/avg/model_92_90_72.bin", map_location=torch.device('cuda')))
+            model.to(torch.device('cuda'))
         result_list = []
         model.eval()
         for j, large_batch_data in enumerate(tqdm(test_dataset)):
