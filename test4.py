@@ -21,6 +21,12 @@ from seq.seq import TCNModel, LSTMModel, AVGModel, AttentionModel
 
 
 if __name__ == "__main__":
-    with open("/Volumes/hedongfeng/data/vip/result_list.pkl", "rb") as f:
+    new_result_list = []
+    with open("result_list.pkl", "rb") as f:
         result_list = pickle.load(f)
-        print()
+        for qingting_id, group_id, probs in result_list:
+            group_id = group_id.to('cpu').detach().numpy().tolist()
+            probs = np.array(probs).squeeze().tolist()
+            new_result_list.append([qingting_id, group_id, probs])
+    with open("new_result_list.pkl", "wb") as f:
+        pickle.dump(new_result_list, f)
