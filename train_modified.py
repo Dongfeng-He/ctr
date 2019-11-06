@@ -735,13 +735,42 @@ class Trainer:
         y_valid = np.array(y_list[train_num:])
         x_train = np.array(x_list[:train_num])
         y_train = np.array(y_list[:train_num])
-        classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, n_estimators=500,
-                                           tree_method='gpu_hist' if os.path.exists("/root") else 'auto'
-                                           )
-        classifier.fit(x_train, y_train)
-        y_pred = classifier.predict(x_valid)
-        acc_score = accuracy_score(y_valid, y_pred)
-        print("acc_score:", acc_score)
+        if True:
+            while True:
+                learning_rate = [0.01, 0.05, 0.07, 0.1, 0.2][random.randint(0, 4)]
+                n_estimators = random.randint(50, 1000)
+                max_depth = random.randint(3, 10)
+                min_child_weight = random.randint(1, 12)
+                gamma = random.uniform(0.1, 0.6)
+                subsample = [0.6, 0.7, 0.8, 0.9][random.randint(0, 3)]
+                colsample_bytree = [0.6, 0.7, 0.8, 0.9][random.randint(0, 3)]
+                reg_alpha = [0.05, 0.1, 1, 2, 3][random.randint(0, 4)]
+                reg_lambda = [0.05, 0.1, 1, 2, 3][random.randint(0, 4)]
+                classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, learning_rate=learning_rate,
+                                                   n_estimators=n_estimators, max_depth=max_depth,
+                                                   min_child_weight=min_child_weight, gamma=gamma, subsample=subsample,
+                                                   colsample_bytree=colsample_bytree, reg_alpha=reg_alpha,
+                                                   reg_lambda=reg_lambda,
+                                                   tree_method='gpu_hist' if os.path.exists("/root") else 'auto')
+                params = [learning_rate, n_estimators, max_depth, min_child_weight, gamma, subsample, colsample_bytree, reg_alpha, reg_lambda]
+                print(params)
+                classifier.fit(x_train, y_train)
+                y_pred = classifier.predict(x_valid)
+                acc_score = accuracy_score(y_valid, y_pred)
+                print("acc_score:", acc_score)
+        else:
+            [learning_rate, n_estimators, max_depth, min_child_weight, gamma, subsample, colsample_bytree, reg_alpha,
+             reg_lambda] = [0.01, 500, 7, 2, 0.22, 0.7, 0.7, 1, 0.05]
+            classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, learning_rate=learning_rate,
+                                               n_estimators=n_estimators, max_depth=max_depth,
+                                               min_child_weight=min_child_weight, gamma=gamma, subsample=subsample,
+                                               colsample_bytree=colsample_bytree, reg_alpha=reg_alpha,
+                                               reg_lambda=reg_lambda,
+                                               tree_method='gpu_hist' if os.path.exists("/root") else 'auto')
+            classifier.fit(x_train, y_train)
+            y_pred = classifier.predict(x_valid)
+            acc_score = accuracy_score(y_valid, y_pred)
+            print("acc_score:", acc_score)
         feat_list = ["gender", "age", "os", "brand", "model", "country", "province", "city", "first_buy", "zhibo_flag", "sum_fee", "stay_day", "program_cnt", "channel_cnt", "cate_cnt"]
         feat_dict = {i: feat for i, feat in enumerate(feat_list)}
         feature_importance_pairs = list(zip(feat_dict, classifier.feature_importances_))
@@ -760,7 +789,7 @@ if __name__ == "__main__":
     # 每次改变了 load_data (比如 use_seq_cnt=True)，都要重新删掉 pkl 文件，重新加载
     trainer = Trainer(epochs=10, batch_size=16, seed=1, use_ratio=1, split_ratio=0.8, lr=3e-4, weight_decay=0.000,
                       optimizer="adam", lr_schedule="", warmup_steps=2000, use_grad_clip=True, max_grad=1.0,
-                      use_apex=False, output_model=False, emb_dir="emb/", data_dir=data_dir, downsample=False,
+                      use_apex=False, output_model=False, emb_dir="emb/", data_dir=data_dir, downsample=True,
                       model_save_dir="avg/", debug_mode=False, use_seq_emb=True, use_seq_cnt=True, embedding_size=10,
                       is_shallow_dropout=True, dropout_shallow=(0.5, 0.5), deep_layers=(32, 32), is_deep_dropout=True,
                       dropout_deep=(0.5, 0.5, 0.5), deep_layers_activation='relu', is_batch_norm=False, use_plain_emb=True,
