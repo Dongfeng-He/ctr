@@ -760,7 +760,7 @@ if __name__ == "__main__":
     # 每次改变了 load_data (比如 use_seq_cnt=True)，都要重新删掉 pkl 文件，重新加载
     trainer = Trainer(epochs=10, batch_size=16, seed=1, use_ratio=1, split_ratio=0.8, lr=3e-4, weight_decay=0.000,
                       optimizer="adam", lr_schedule="", warmup_steps=2000, use_grad_clip=True, max_grad=1.0,
-                      use_apex=False, output_model=False, emb_dir="emb/", data_dir=data_dir, downsample=True,
+                      use_apex=False, output_model=False, emb_dir="emb/", data_dir=data_dir, downsample=False,
                       model_save_dir="avg/", debug_mode=False, use_seq_emb=True, use_seq_cnt=True, embedding_size=10,
                       is_shallow_dropout=True, dropout_shallow=(0.5, 0.5), deep_layers=(32, 32), is_deep_dropout=True,
                       dropout_deep=(0.5, 0.5, 0.5), deep_layers_activation='relu', is_batch_norm=False, use_plain_emb=True,
