@@ -18,6 +18,7 @@ from torch.utils import data
 from tqdm import tqdm
 
 from seq.seq import TCNModel, LSTMModel, AVGModel, AttentionModel
+import xgboost
 
 
 class MyDataset(data.Dataset):
@@ -711,6 +712,44 @@ class Trainer:
             model.train()
         f_log.close()
 
+    def train_xgb(self):
+        if os.path.exists("/root") and os.path.exists("processed_data_list.pkl") and self.debug_mode is False:
+            with open("processed_data_list.pkl", "rb") as f:
+                data_list = pickle.load(f)
+        else:
+            data_list = self.load_data()
+        if self.downsample:
+            data_list = list(filter(lambda x: (x[5][0] * 2.57 + x[5][2] * 6.96) * random.random() < 1, data_list))
+        labels_list = list(map(lambda x: x[5], data_list))
+        label_sum = np.sum(labels_list, axis=0).tolist()
+        print("label_sum", label_sum)
+        if self.debug_mode is False:
+            self.seed_everything()
+            data_list = random.sample(data_list, int(len(data_list) * self.use_ratio))
+            self.seed_everything()
+            random.shuffle(data_list)
+        train_num = int(len(data_list) * self.split_ratio)
+        x_list = list(map(lambda x: x[0], data_list))
+        y_list = list(map(lambda x: np.argmax(x[5]), data_list))
+        x_valid = np.array(x_list[train_num:])
+        y_valid = np.array(y_list[train_num:])
+        x_train = np.array(x_list[:train_num])
+        y_train = np.array(y_list[:train_num])
+        classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, n_estimators=500,
+                                           tree_method='gpu_hist' if os.path.exists("/root") else 'auto'
+                                           )
+        classifier.fit(x_train, y_train)
+        y_pred = classifier.predict(x_valid)
+        acc_score = accuracy_score(y_valid, y_pred)
+        print("acc_score:", acc_score)
+        feat_list = ["gender", "age", "os", "brand", "model", "country", "province", "city", "first_buy", "zhibo_flag", "sum_fee", "stay_day", "program_cnt", "channel_cnt", "cate_cnt"]
+        feat_dict = {i: feat for i, feat in enumerate(feat_list)}
+        feature_importance_pairs = list(zip(feat_dict, classifier.feature_importances_))
+        sorted_feature_importance = sorted(feature_importance_pairs, key=lambda x: x[1], reverse=True)
+        # 打印特征重要性
+        for i, (feat_index, score) in enumerate(sorted_feature_importance):
+            print("%d\t%s\t%f" % (i + 1, feat_dict[feat_index], score))
+
 
 if __name__ == "__main__":
     if os.path.exists("/Volumes/hedongfeng/data/vip/"):
@@ -727,7 +766,7 @@ if __name__ == "__main__":
                       dropout_deep=(0.5, 0.5, 0.5), deep_layers_activation='relu', is_batch_norm=False, use_plain_emb=True,
                       use_lstm=False, use_tcn=False, use_avg=True, use_att=False, seq_emb_size=64, seq_hidden_size=32,
                       seq_pool="both", dense_product_feature=False, loss_func="bce", log_name="avg_modified")
-    trainer.train()
-
+    # trainer.train()
+    trainer.train_xgb()
 
 
