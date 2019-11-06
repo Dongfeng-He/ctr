@@ -736,6 +736,7 @@ class Trainer:
         x_train = np.array(x_list[:train_num])
         y_train = np.array(y_list[:train_num])
         if True:
+            best_acc = -1
             while True:
                 learning_rate = [0.01, 0.05, 0.07, 0.1, 0.2][random.randint(0, 4)]
                 n_estimators = random.randint(50, 1000)
@@ -753,11 +754,13 @@ class Trainer:
                                                    reg_lambda=reg_lambda,
                                                    tree_method='gpu_hist' if os.path.exists("/root") else 'auto')
                 params = [learning_rate, n_estimators, max_depth, min_child_weight, gamma, subsample, colsample_bytree, reg_alpha, reg_lambda]
-                print(params)
                 classifier.fit(x_train, y_train)
                 y_pred = classifier.predict(x_valid)
                 acc_score = accuracy_score(y_valid, y_pred)
-                print("acc_score:", acc_score)
+                if acc_score > best_acc:
+                    best_acc = acc_score
+                    print(params)
+                    print("acc_score:", acc_score)
         else:
             [learning_rate, n_estimators, max_depth, min_child_weight, gamma, subsample, colsample_bytree, reg_alpha,
              reg_lambda] = [0.01, 500, 7, 2, 0.22, 0.7, 0.7, 1, 0.05]
