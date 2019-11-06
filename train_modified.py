@@ -735,7 +735,8 @@ class Trainer:
         y_valid = np.array(y_list[train_num:])
         x_train = np.array(x_list[:train_num])
         y_train = np.array(y_list[:train_num])
-        if True:
+        grid_search = False
+        if grid_search:
             best_acc = -1
             while True:
                 learning_rate = [0.01, 0.05, 0.07, 0.1, 0.2][random.randint(0, 4)]
@@ -763,7 +764,7 @@ class Trainer:
                     print("acc_score:", acc_score)
         else:
             [learning_rate, n_estimators, max_depth, min_child_weight, gamma, subsample, colsample_bytree, reg_alpha,
-             reg_lambda] = [0.01, 500, 7, 2, 0.22, 0.7, 0.7, 1, 0.05]
+             reg_lambda] = [0.01, 685, 7, 2, 0.544, 0.8, 0.9, 0.05, 3]
             classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, learning_rate=learning_rate,
                                                n_estimators=n_estimators, max_depth=max_depth,
                                                min_child_weight=min_child_weight, gamma=gamma, subsample=subsample,
